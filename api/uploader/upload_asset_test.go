@@ -7,8 +7,10 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -312,6 +314,135 @@ func TestColorWeightJSON(t *testing.T) {
 		}
 		if got, want := string(b), test.JSON; got != want {
 			t.Errorf("got %v, want %v", got, want)
+		}
+	}
+}
+
+func TestUploadResultJSON(t *testing.T) {
+	tests := []struct {
+		JSON   string
+		Result uploader.UploadResult
+	}{
+		{
+			JSON: `
+{
+	"asset_id": "c3f435bff0410515f8fdadb2a5037881",
+	"public_id": "testimage",
+	"version": 1645288244,
+	"version_id": "ecc1001803c67e03780bb2e43a71314e",
+	"signature": "910e43e4e41490d1bac6cc5309dde599c7edb933",
+	"width": 600,
+	"height": 600,
+	"format": "png",
+	"resource_type": "image",
+	"created_at": "2022-02-19T16:30:44Z",
+	"pages": 1,
+	"bytes": 31543,
+	"type": "upload",
+	"etag": "a1e0cf45cf40c6a5e919ac6785d92d5b",
+	"url": "http://foo.com/image/upload/v1645288244/testimage.png",
+	"secure_url": "https://foo.com/image/upload/v1645288244/testimage.png",
+	"colors": [
+		[
+			"#E4E4A8",
+			71
+		],
+		[
+			"#2F2F2F",
+			8.7
+		],
+		[
+			"#7A6241",
+			7.8
+		],
+		[
+			"#DEC39C",
+			7.4
+		]
+	],
+	"predominant": {
+		"cloudinary": [
+			[
+				"yellow",
+				71
+			],
+			[
+				"black",
+				8.7
+			],
+			[
+				"brown",
+				7.8
+			],
+			[
+				"orange",
+				7.4
+			]
+		],
+		"google": [
+			[
+				"yellow",
+				71
+			],
+			[
+				"black",
+				8.7
+			],
+			[
+				"brown",
+				7.8
+			],
+			[
+				"orange",
+				7.4
+			]
+		]
+	},
+	"phash": "31845b631e659ee9",
+	"original_filename": "file",
+	"eager": null,
+	"responsive_breakpoints": null,
+	"error": {
+		"message": ""
+	}
+}`,
+			Result: uploader.UploadResult{
+				AssetID:      "c3f435bff0410515f8fdadb2a5037881",
+				PublicID:     "testimage",
+				Version:      1645288244,
+				VersionID:    "ecc1001803c67e03780bb2e43a71314e",
+				Signature:    "910e43e4e41490d1bac6cc5309dde599c7edb933",
+				Width:        600,
+				Height:       600,
+				Format:       "png",
+				ResourceType: "image",
+				CreatedAt:    time.Date(2022, time.February, 19, 16, 30, 44, 0, time.UTC),
+				Pages:        1,
+				Bytes:        31543,
+				Type:         "upload",
+				Etag:         "a1e0cf45cf40c6a5e919ac6785d92d5b",
+				URL:          "http://foo.com/image/upload/v1645288244/testimage.png",
+				SecureURL:    "https://foo.com/image/upload/v1645288244/testimage.png",
+				Colors: []uploader.ColorWeight{
+					{Color: "#E4E4A8", Weight: 71}, {Color: "#2F2F2F", Weight: 8.7}, {Color: "#7A6241", Weight: 7.8}, {Color: "#DEC39C", Weight: 7.4},
+				},
+				Predominant: map[string][]uploader.ColorWeight{
+					"cloudinary": {{Color: "yellow", Weight: 71}, {Color: "black", Weight: 8.7}, {Color: "brown", Weight: 7.8}, {Color: "orange", Weight: 7.4}},
+					"google":     {{Color: "yellow", Weight: 71}, {Color: "black", Weight: 8.7}, {Color: "brown", Weight: 7.8}, {Color: "orange", Weight: 7.4}},
+				},
+				Phash:            "31845b631e659ee9",
+				OriginalFilename: "file",
+			},
+		},
+	}
+	for _, test := range tests {
+		// Test json.Unmarshal
+		var result uploader.UploadResult
+		if err := json.Unmarshal([]byte(test.JSON), &result); err != nil {
+			t.Error(err)
+		}
+		if got, want := result, test.Result; !reflect.DeepEqual(got, want) {
+			t.Errorf("got %#v, want %#v", got, want)
 		}
 	}
 }

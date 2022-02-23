@@ -109,6 +109,7 @@ func (u *API) Upload(ctx context.Context, file interface{}, uploadParams UploadP
 	if err != nil {
 		return nil, err
 	}
+
 	upload := &UploadResult{}
 	err = json.Unmarshal(body, upload)
 	if err != nil {
@@ -191,7 +192,7 @@ type UploadResult struct {
 	Moderation            []Moderation                  `json:"moderation,omitempty"`
 	Overwritten           bool                          `json:"overwritten"`
 	Colors                []ColorWeight                 `json:"colors,omitempty"`
-	Predominant           map[string]ColorWeight        `json:"predominant,omitempty"`
+	Predominant           map[string][]ColorWeight      `json:"predominant,omitempty"`
 	Phash                 string                        `json:"phash,omitempty"`
 	OriginalFilename      string                        `json:"original_filename"`
 	Eager                 []Eager                       `json:"eager"`
