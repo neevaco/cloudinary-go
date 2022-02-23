@@ -399,12 +399,7 @@ func TestUploadResultJSON(t *testing.T) {
 		]
 	},
 	"phash": "31845b631e659ee9",
-	"original_filename": "file",
-	"eager": null,
-	"responsive_breakpoints": null,
-	"error": {
-		"message": ""
-	}
+	"original_filename": "file"
 }`,
 			Result: uploader.UploadResult{
 				AssetID:      "c3f435bff0410515f8fdadb2a5037881",
