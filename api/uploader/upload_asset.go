@@ -105,7 +105,6 @@ func (u *API) Upload(ctx context.Context, file interface{}, uploadParams UploadP
 	}
 
 	body, err := u.postFile(ctx, file, formParams)
-
 	if err != nil {
 		return nil, err
 	}
